@@ -1471,6 +1471,7 @@
               <div>
                 <label class="block text-gray-300 mb-2 font-medium">Nome</label>
                 <input
+                  id="contact-name"
                   type="text"
                   required
                   placeholder="Seu nome completo"
@@ -1482,6 +1483,7 @@
               <div>
                 <label class="block text-gray-300 mb-2 font-medium">E-mail</label>
                 <input
+                  id="contact-email"
                   type="email"
                   required
                   placeholder="seu@email.com"
@@ -1490,20 +1492,11 @@
               </div>
             </div>
 
-            <!-- Telefone -->
-            <div>
-              <label class="block text-gray-300 mb-2 font-medium">Telefone (opcional)</label>
-              <input
-                type="tel"
-                placeholder="(00) 00000-0000"
-                class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white border border-[#FFD451]/20 focus:outline-none focus:border-[#FFD451] transition-all"
-              />
-            </div>
-
             <!-- Mensagem -->
             <div>
               <label class="block text-gray-300 mb-2 font-medium">Mensagem</label>
               <textarea
+                id="contact-message"
                 required
                 rows="5"
                 placeholder="Conte-me sobre seu projeto..."
@@ -2166,8 +2159,24 @@
       // ==================== FORM CONTATO ====================
       function handleSubmit(e) {
         e.preventDefault();
-        alert('Obrigado! Sua mensagem foi enviada com sucesso. Responderei em breve!');
-        e.target.reset();
+
+        // Pegar valores dos campos
+        const name = document.getElementById('contact-name').value;
+        const email = document.getElementById('contact-email').value;
+        const message = document.getElementById('contact-message').value;
+
+        // Montar mensagem para WhatsApp
+        const whatsappMessage = `Olá! Meu nome é ${name}.\n\nE-mail: ${email}\n\nMensagem: ${message}`;
+
+        // Codificar a mensagem para URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+
+        // Número do WhatsApp (adicionar código do país 55 para Brasil)
+        const phoneNumber = '5541997078372';
+
+        // Abrir WhatsApp
+        window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+
         return false;
       }
     </script>
