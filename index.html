@@ -300,16 +300,35 @@
           max-width: 100vw;
           padding-left: 0.5rem;
           padding-right: 0.5rem;
-          touch-action: pan-x;
+          touch-action: manipulation !important;
           overscroll-behavior-x: contain;
+          -webkit-overflow-scrolling: touch;
+          pointer-events: auto;
         }
 
-        /* Cards dentro do carrossel */
+        /* Cards dentro do carrossel também permitem touch em ambas direções */
         .portfolio-card {
           min-width: 250px !important;
           width: 250px !important;
           max-width: 250px !important;
           flex: 0 0 250px !important;
+          touch-action: manipulation !important;
+          pointer-events: auto !important;
+        }
+
+        /* TODOS os elementos dentro dos carrosséis permitem scroll e touch */
+        #videos-carousel *,
+        #photos-carousel *,
+        #auto-videos-carousel * {
+          touch-action: manipulation !important;
+          pointer-events: auto !important;
+        }
+
+        /* Cards e seus filhos */
+        .portfolio-card,
+        .portfolio-card * {
+          touch-action: manipulation !important;
+          pointer-events: auto !important;
         }
 
         /* Garantir que os carrosséis tenham a largura correta */
@@ -332,11 +351,11 @@
         }
       }
 
-      /* Permitir scroll horizontal apenas nos carrosséis */
+      /* Permitir scroll em ambas direções nos carrosséis */
       #videos-carousel,
       #photos-carousel,
       #auto-videos-carousel {
-        touch-action: pan-x;
+        touch-action: manipulation;
         overscroll-behavior-x: contain;
         scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
@@ -1580,11 +1599,10 @@
           }
         }, { passive: true });
 
-        // Prevenir touch horizontal fora dos carrosséis (otimizado)
+        // Prevenir touch horizontal APENAS fora dos carrosséis
         let touchStartX = 0;
         let touchStartY = 0;
         let isScrollingCarousel = false;
-        const carouselIds = ['videos-carousel', 'photos-carousel', 'auto-videos-carousel'];
 
         document.addEventListener('touchstart', (e) => {
           if (!e.touches || !e.touches[0]) return;
@@ -1592,15 +1610,17 @@
           touchStartX = e.touches[0].clientX;
           touchStartY = e.touches[0].clientY;
 
-          // Verificar se o touch está em um carrossel
-          isScrollingCarousel = carouselIds.some(id => {
-            const carousel = document.getElementById(id);
-            return carousel && carousel.contains(e.target);
-          });
+          // Verificar se o touch está em um carrossel (usando closest)
+          const target = e.target;
+          isScrollingCarousel = !!(
+            target.closest('#videos-carousel') ||
+            target.closest('#photos-carousel') ||
+            target.closest('#auto-videos-carousel')
+          );
         }, { passive: true });
 
         document.addEventListener('touchmove', (e) => {
-          // Se está em carrossel, não fazer nada
+          // Se está em carrossel, PERMITIR todo tipo de scroll (horizontal e vertical)
           if (isScrollingCarousel) return;
 
           if (!e.touches || !e.touches[0]) return;
@@ -1610,7 +1630,7 @@
           const diffX = Math.abs(touchStartX - touchEndX);
           const diffY = Math.abs(touchStartY - touchEndY);
 
-          // Se movimento é predominantemente horizontal, prevenir
+          // APENAS prevenir se movimento horizontal E não está em carrossel
           if (diffX > diffY && diffX > 10) {
             e.preventDefault();
           }
