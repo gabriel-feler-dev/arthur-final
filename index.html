@@ -2,7 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>Arthur Lima | Fotógrafo & Videomaker</title>
     <meta name="description" content="Portfólio de Arthur Lima - Fotografia profissional, produção e edição de vídeos.">
 
@@ -20,17 +20,56 @@
     <style>
       /* ==================== GLOBAL ==================== */
       * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
         scroll-behavior: smooth;
+      }
+
+      html {
+        overflow-x: hidden;
+        max-width: 100vw;
+        touch-action: pan-y pinch-zoom;
       }
 
       body {
         font-family: "Poppins", sans-serif;
         overflow-x: hidden;
+        max-width: 100vw;
+        position: relative;
+        width: 100%;
+        touch-action: pan-y pinch-zoom;
+      }
+
+      /* Prevenir overflow em todos os containers */
+      section, div, header, footer {
+        max-width: 100%;
+      }
+
+      /* Garantir que imagens não causem overflow */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Garantir que containers flexbox não causem overflow */
+      .flex {
+        min-width: 0;
+      }
+
+      /* Prevenir texto longo de causar overflow */
+      h1, h2, h3, h4, h5, h6, p {
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       /* ==================== HERO ==================== */
       #hero {
         position: relative;
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
       }
 
       #hero::before {
@@ -41,9 +80,15 @@
         z-index: 1;
       }
 
+      /* Ajustar background no mobile */
+      @media (max-width: 768px) {
+        .hero-bg {
+          background-attachment: scroll !important;
+        }
+      }
+
       #hero h1 {
         line-height: 1.2;
-        white-space: nowrap;
         overflow: hidden;
       }
 
@@ -51,6 +96,13 @@
         display: inline-block;
         min-height: 1.2em;
         vertical-align: bottom;
+      }
+
+      /* Garantir que não cause overflow no mobile */
+      @media (min-width: 769px) {
+        #hero h1 {
+          white-space: nowrap;
+        }
       }
 
       /* ==================== MODAIS ==================== */
@@ -65,11 +117,40 @@
         align-items: center;
         z-index: 1000;
         animation: fadeIn 0.3s ease;
+        overflow: hidden;
+        width: 100vw;
+        max-width: 100vw;
       }
 
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+      }
+
+      /* Garantir que conteúdo dos modais não cause overflow */
+      #videoModal > div,
+      #photoModal > div {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+
+      @media (max-width: 768px) {
+        #photoModalImg {
+          max-width: 90vw !important;
+          max-height: 70vh !important;
+        }
+
+        #videoModal > div,
+        #videoModal iframe {
+          max-width: 95vw !important;
+          width: 95vw !important;
+        }
+
+        /* Ajustar botões de fechar dos modais */
+        #videoModal button,
+        #photoModal button {
+          font-size: 2rem;
+        }
       }
 
       /* ==================== FILTROS PORTFOLIO ==================== */
@@ -122,6 +203,9 @@
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        max-width: 100%;
       }
 
       .carousel-container::-webkit-scrollbar {
@@ -135,10 +219,148 @@
       .scrollbar-hide {
         scrollbar-width: none;
         -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
       }
 
       .scrollbar-hide::-webkit-scrollbar {
         display: none;
+      }
+
+      /* Garantir que carrosséis em mobile não causem overflow na página */
+      @media (max-width: 768px) {
+        #videos-carousel,
+        #photos-carousel,
+        #auto-videos-carousel {
+          width: 100%;
+          max-width: 100vw;
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+          touch-action: pan-x;
+          overscroll-behavior-x: contain;
+        }
+
+        /* Cards dentro do carrossel */
+        .portfolio-card {
+          min-width: 250px !important;
+          width: 250px !important;
+          max-width: 250px !important;
+          flex: 0 0 250px !important;
+        }
+
+        /* Garantir que os carrosséis tenham a largura correta */
+        #videos-carousel > .portfolio-card,
+        #photos-carousel > .portfolio-card,
+        #auto-videos-carousel > .portfolio-card {
+          margin-right: 0;
+        }
+
+        #videos-carousel > .portfolio-card:first-child,
+        #photos-carousel > .portfolio-card:first-child,
+        #auto-videos-carousel > .portfolio-card:first-child {
+          margin-left: 0.5rem;
+        }
+
+        #videos-carousel > .portfolio-card:last-child,
+        #photos-carousel > .portfolio-card:last-child,
+        #auto-videos-carousel > .portfolio-card:last-child {
+          margin-right: 0.5rem;
+        }
+      }
+
+      /* Permitir scroll horizontal apenas nos carrosséis */
+      #videos-carousel,
+      #photos-carousel,
+      #auto-videos-carousel {
+        touch-action: pan-x;
+        overscroll-behavior-x: contain;
+      }
+
+      /* Forçar todos os elementos a respeitarem o limite da viewport */
+      * {
+        min-width: 0;
+      }
+
+      /* Garantir que elementos posicionados absolutamente não causem overflow */
+      [class*="absolute"] {
+        max-width: 100vw;
+      }
+
+      /* Prevenir overflow de grid e flex containers */
+      [class*="grid"],
+      [class*="flex"] {
+        max-width: 100%;
+        overflow: visible;
+      }
+
+      /* Ajustar containers principais */
+      .container,
+      .max-w-7xl,
+      .max-w-4xl,
+      .max-w-2xl {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      @media (min-width: 769px) {
+        .max-w-7xl {
+          max-width: 80rem;
+        }
+
+        .max-w-4xl {
+          max-width: 56rem;
+        }
+
+        .max-w-2xl {
+          max-width: 42rem;
+        }
+      }
+
+      /* IMPORTANTE: Regra final para prevenir overflow horizontal */
+      @media (max-width: 768px) {
+        /* Aplicar max-width apenas aos containers principais */
+        section, header, footer, nav, main, article {
+          max-width: 100vw !important;
+          overflow-x: hidden !important;
+        }
+
+        /* Containers que podem ter overflow controlado */
+        div[class*="container"],
+        div[class*="max-w-"],
+        div[class*="mx-auto"] {
+          max-width: 100vw !important;
+        }
+
+        /* Cards dos carrosséis precisam ter largura fixa */
+        .portfolio-card,
+        .carousel-item {
+          max-width: 250px !important;
+        }
+
+        /* Garantir que imagens sejam responsivas */
+        img:not([src*="logo"]) {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+
+        /* Garantir que o hero section não cause overflow */
+        #hero,
+        #hero > div,
+        #hero .flex {
+          max-width: 100vw !important;
+        }
+
+        /* Ajustar botões do hero no mobile */
+        #hero .btn-primary,
+        #hero a {
+          font-size: 0.9rem !important;
+          padding: 0.875rem 2rem !important;
+        }
+
+        /* Garantir que flex containers no hero sejam responsivos */
+        #hero .flex-col,
+        #hero .flex-row {
+          width: 100% !important;
+        }
       }
 
       /* ==================== BOTÕES ==================== */
@@ -171,6 +393,99 @@
           white-space: normal;
           word-break: break-word;
           min-height: auto;
+          font-size: clamp(1.5rem, 8vw, 2.5rem);
+        }
+
+        /* Ajustar padding dos carrosséis no mobile */
+        .carousel-mobile-padding {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+
+        /* Ajustar posicionamento das setas de navegação */
+        .carousel-nav-left {
+          left: 8px !important;
+        }
+
+        .carousel-nav-right {
+          right: 8px !important;
+        }
+
+        /* Garantir que header não cause overflow */
+        #main-header {
+          width: 100vw;
+          max-width: 100vw;
+          left: 0;
+          right: 0;
+        }
+
+        #main-header > div {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        /* Garantir que cards do carrossel não causem overflow */
+        .portfolio-card {
+          flex-shrink: 0;
+        }
+
+        /* Remover padding extra em mobile */
+        .mobile-no-padding {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+
+        /* Garantir que containers não ultrapassem a largura da tela */
+        .max-w-7xl {
+          max-width: 100% !important;
+        }
+
+        /* Menu mobile não deve ultrapassar a tela */
+        #mobile-menu {
+          max-width: 90vw;
+          width: 72vw;
+          right: 0;
+        }
+
+        #mobile-menu.hidden {
+          display: flex !important;
+        }
+
+        /* Ajustar botões para não causarem overflow */
+        .btn-primary,
+        a[href^="#"] {
+          max-width: 100%;
+          white-space: normal;
+        }
+
+        /* Ajustar tamanhos de fonte responsivos */
+        h2 {
+          font-size: clamp(1.75rem, 7vw, 3rem) !important;
+        }
+
+        h3 {
+          font-size: clamp(1.5rem, 6vw, 2.5rem) !important;
+        }
+
+        /* Ajustar padding das seções */
+        section {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+
+        .px-6 {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+
+        .px-8 {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+
+        .px-12 {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
         }
       }
     </style>
@@ -289,7 +604,7 @@
     <!-- ==================== HERO SECTION ==================== -->
     <section
       id="hero"
-      class="min-h-screen flex flex-col justify-center items-center text-center relative bg-cover bg-center bg-fixed"
+      class="hero-bg min-h-screen flex flex-col justify-center items-center text-center relative bg-cover bg-center bg-fixed"
       style="background-image: url('./assets/images/background_hero.png')"
     >
       <!-- Overlay -->
@@ -448,14 +763,14 @@
               <!-- Grid de Vídeos / Carrossel Mobile -->
               <div class="relative">
                 <!-- Setas de Navegação (Mobile only) -->
-                <button onclick="scrollCarousel('videos-carousel', -1)" class="md:hidden absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                <button onclick="scrollCarousel('videos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                   ‹
                 </button>
-                <button onclick="scrollCarousel('videos-carousel', 1)" class="md:hidden absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                <button onclick="scrollCarousel('videos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                   ›
                 </button>
 
-                <div id="videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-12 md:px-0">
+                <div id="videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
                 <!-- Vídeo 1 -->
                 <div
                   class="portfolio-card group bg-[#1a1a1a] rounded-xl overflow-hidden cursor-pointer border border-[#FFD451]/10 min-w-[250px] w-[250px] flex-shrink-0 snap-center md:min-w-0 md:w-auto md:flex-shrink"
@@ -618,14 +933,14 @@
             <!-- Grid de Fotos / Carrossel Mobile -->
             <div class="relative">
               <!-- Setas de Navegação (Mobile only) -->
-              <button onclick="scrollCarousel('photos-carousel', -1)" class="md:hidden absolute -left-2 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+              <button onclick="scrollCarousel('photos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                 ‹
               </button>
-              <button onclick="scrollCarousel('photos-carousel', 1)" class="md:hidden absolute -right-2 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+              <button onclick="scrollCarousel('photos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                 ›
               </button>
 
-              <div id="photos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-12 md:px-0">
+              <div id="photos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
               <!-- Foto BMW -->
               <div
                 class="portfolio-card group bg-[#1a1a1a] rounded-xl overflow-hidden cursor-pointer border border-[#FFD451]/10 min-w-[250px] w-[250px] flex-shrink-0 snap-center md:min-w-0 md:w-auto md:flex-shrink"
@@ -751,14 +1066,14 @@
               <!-- Grid de Vídeos Automotivos / Carrossel Mobile -->
               <div class="relative">
                 <!-- Setas de Navegação (Mobile only) -->
-                <button onclick="scrollCarousel('auto-videos-carousel', -1)" class="md:hidden absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                <button onclick="scrollCarousel('auto-videos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                   ‹
                 </button>
-                <button onclick="scrollCarousel('auto-videos-carousel', 1)" class="md:hidden absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                <button onclick="scrollCarousel('auto-videos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                   ›
                 </button>
 
-                <div id="auto-videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-12 md:px-0">
+                <div id="auto-videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
                   <!-- Vídeo Automotivo 1 -->
                   <div
                     class="portfolio-card group bg-[#1a1a1a] rounded-xl overflow-hidden cursor-pointer border border-[#FFD451]/10 min-w-[250px] w-[250px] flex-shrink-0 snap-center md:min-w-0 md:w-auto md:flex-shrink"
@@ -1166,7 +1481,60 @@
         initSmoothScroll();
         initMobileMenu();
         initModals();
+        preventHorizontalScroll();
       });
+
+      // ==================== PREVENIR SCROLL HORIZONTAL ====================
+      function preventHorizontalScroll() {
+        // Prevenir scroll horizontal na página (permitir apenas nos carrosséis)
+        let scrollTimeout;
+
+        window.addEventListener('scroll', () => {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            if (window.scrollX !== 0) {
+              window.scrollTo(0, window.scrollY);
+            }
+          }, 10);
+        });
+
+        // Garantir que a página sempre fique com scroll X em 0
+        setInterval(() => {
+          if (window.scrollX !== 0) {
+            window.scrollTo(0, window.scrollY);
+          }
+        }, 100);
+
+        // Prevenir touch horizontal fora dos carrosséis
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const carouselIds = ['videos-carousel', 'photos-carousel', 'auto-videos-carousel'];
+
+        document.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+
+          const touchEndX = e.touches[0].clientX;
+          const touchEndY = e.touches[0].clientY;
+          const diffX = touchStartX - touchEndX;
+          const diffY = touchStartY - touchEndY;
+
+          // Verificar se o touch está em um carrossel
+          const isInCarousel = carouselIds.some(id => {
+            const carousel = document.getElementById(id);
+            return carousel && carousel.contains(e.target);
+          });
+
+          // Se não está em carrossel e movimento é mais horizontal que vertical, prevenir
+          if (!isInCarousel && Math.abs(diffX) > Math.abs(diffY)) {
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
 
       // ==================== TYPEWRITER (HERO) ====================
       const phrases = [
@@ -1295,15 +1663,27 @@
       }
 
       // ===== MODAL DE VÍDEO =====
+      // Variável global para salvar posição do scroll
+      let scrollPosition = 0;
+
       function openModal(youtubeId) {
         const modal = document.getElementById("videoModal");
         const iframe = document.getElementById("modalVideo");
 
         if (!modal || !iframe) return;
 
+        // Salvar posição atual do scroll
+        scrollPosition = window.scrollY || window.pageYOffset;
+
         iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
         modal.style.display = "flex";
+
+        // Fixar body na posição atual
         document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.style.width = '100%';
+        document.documentElement.style.overflow = 'hidden';
       }
 
       function closeModal() {
@@ -1314,7 +1694,16 @@
 
         iframe.src = "";
         modal.style.display = "none";
-        document.body.style.overflow = 'auto';
+
+        // Restaurar body
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.documentElement.style.overflow = '';
+
+        // Restaurar posição do scroll
+        window.scrollTo(0, scrollPosition);
       }
 
       // ===== MODAL DE FOTOS =====
@@ -1410,9 +1799,18 @@
         const modal = document.getElementById("photoModal");
         const title = document.getElementById("photoTitle");
 
+        // Salvar posição atual do scroll
+        scrollPosition = window.scrollY || window.pageYOffset;
+
         title.textContent = galleryName;
         modal.style.display = "flex";
+
+        // Fixar body na posição atual
         document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.style.width = '100%';
+        document.documentElement.style.overflow = 'hidden';
 
         renderPhoto();
       }
@@ -1424,7 +1822,17 @@
         const title = document.getElementById("photoTitle");
 
         modal.style.display = "none";
-        document.body.style.overflow = 'auto';
+
+        // Restaurar body
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.documentElement.style.overflow = '';
+
+        // Restaurar posição do scroll
+        window.scrollTo(0, scrollPosition);
+
         img.src = "";
         currentGallery = [];
         currentIndex = 0;
