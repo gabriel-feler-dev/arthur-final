@@ -216,17 +216,6 @@
         }
       }
 
-      /* ==================== FILTROS PORTFOLIO ==================== */
-      .filter-btn {
-        transition: all 0.3s ease;
-      }
-
-      .filter-btn.active {
-        background: #FFD451;
-        color: #0D0D0D;
-        font-weight: 600;
-      }
-
       /* ==================== CARDS ==================== */
       .portfolio-card {
         position: relative;
@@ -813,19 +802,6 @@
           <p class="text-gray-400 max-w-2xl mx-auto text-lg">
             Confira alguns dos meus trabalhos mais recentes
           </p>
-        </div>
-
-        <!-- Filtros -->
-        <div class="flex justify-center gap-4 mb-12 flex-wrap" data-aos="fade-up" data-aos-delay="100">
-          <button onclick="filterPortfolio('all')" class="filter-btn active px-6 py-3 rounded-full border border-[#FFD451] text-sm font-semibold transition-all">
-            Todos
-          </button>
-          <button onclick="filterPortfolio('videos')" class="filter-btn px-6 py-3 rounded-full border border-[#FFD451]/30 text-sm font-semibold transition-all hover:border-[#FFD451]">
-            Vídeos
-          </button>
-          <button onclick="filterPortfolio('fotos')" class="filter-btn px-6 py-3 rounded-full border border-[#FFD451]/30 text-sm font-semibold transition-all hover:border-[#FFD451]">
-            Fotografia
-          </button>
         </div>
 
         <!-- ===== PARANÁ CLUBE ===== -->
@@ -1725,31 +1701,6 @@
         const mobileMenu = document.getElementById("mobile-menu");
         mobileMenu.classList.add("translate-x-full");
         setTimeout(() => mobileMenu.classList.add("hidden"), 300);
-      }
-
-      // ==================== FILTROS PORTFÓLIO ====================
-      function filterPortfolio(category) {
-        const items = document.querySelectorAll('.portfolio-item');
-        const buttons = document.querySelectorAll('.filter-btn');
-
-        // Atualiza botões ativos
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        // Filtra itens
-        items.forEach(item => {
-          if (category === 'all') {
-            item.style.display = 'block';
-            item.classList.add('animate-fade-in');
-          } else {
-            if (item.classList.contains(category)) {
-              item.style.display = 'block';
-              item.classList.add('animate-fade-in');
-            } else {
-              item.style.display = 'none';
-            }
-          }
-        });
       }
 
       // ==================== MODAIS ====================
