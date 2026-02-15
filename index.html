@@ -468,6 +468,14 @@
         height: 300px;
       }
 
+      /* Botões de navegação dos carrosséis com efeito glass */
+      .carousel-nav-btn {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 212, 81, 0.3);
+      }
+
       /* ==================== RESPONSIVO ==================== */
       @media (max-width: 768px) {
         #hero h1 {
@@ -831,11 +839,11 @@
               <!-- Grid de Vídeos / Carrossel Mobile -->
               <div class="relative">
                 <!-- Setas de Navegação (Mobile only) -->
-                <button onclick="scrollCarousel('videos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                  ‹
+                <button onclick="scrollCarousel('videos-carousel', -1)" class="carousel-nav-btn carousel-nav-left md:hidden absolute -left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                  <span class="text-[#FFD451] text-2xl font-bold">‹</span>
                 </button>
-                <button onclick="scrollCarousel('videos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                  ›
+                <button onclick="scrollCarousel('videos-carousel', 1)" class="carousel-nav-btn carousel-nav-right md:hidden absolute -right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                  <span class="text-[#FFD451] text-2xl font-bold">›</span>
                 </button>
 
                 <div id="videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
@@ -1001,11 +1009,11 @@
             <!-- Grid de Fotos / Carrossel Mobile -->
             <div class="relative">
               <!-- Setas de Navegação (Mobile only) -->
-              <button onclick="scrollCarousel('photos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                ‹
+              <button onclick="scrollCarousel('photos-carousel', -1)" class="carousel-nav-btn carousel-nav-left md:hidden absolute -left-16 top-[140px] z-20 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                <span class="text-[#FFD451] text-2xl font-bold">‹</span>
               </button>
-              <button onclick="scrollCarousel('photos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-[140px] z-20 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                ›
+              <button onclick="scrollCarousel('photos-carousel', 1)" class="carousel-nav-btn carousel-nav-right md:hidden absolute -right-16 top-[140px] z-20 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                <span class="text-[#FFD451] text-2xl font-bold">›</span>
               </button>
 
               <div id="photos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
@@ -1134,11 +1142,11 @@
               <!-- Grid de Vídeos Automotivos / Carrossel Mobile -->
               <div class="relative">
                 <!-- Setas de Navegação (Mobile only) -->
-                <button onclick="scrollCarousel('auto-videos-carousel', -1)" class="carousel-nav-left md:hidden absolute left-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                  ‹
+                <button onclick="scrollCarousel('auto-videos-carousel', -1)" class="carousel-nav-btn carousel-nav-left md:hidden absolute -left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                  <span class="text-[#FFD451] text-2xl font-bold">‹</span>
                 </button>
-                <button onclick="scrollCarousel('auto-videos-carousel', 1)" class="carousel-nav-right md:hidden absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-[#FFD451] text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
-                  ›
+                <button onclick="scrollCarousel('auto-videos-carousel', 1)" class="carousel-nav-btn carousel-nav-right md:hidden absolute -right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-xl">
+                  <span class="text-[#FFD451] text-2xl font-bold">›</span>
                 </button>
 
                 <div id="auto-videos-carousel" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible scrollbar-hide px-2 md:px-0">
