@@ -23,27 +23,77 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        scroll-behavior: smooth;
       }
 
       html {
         overflow-x: hidden;
+        overflow-y: auto;
         max-width: 100vw;
+        height: 100%;
         touch-action: pan-y pinch-zoom;
+        scroll-behavior: smooth;
+      }
+
+      /* Scroll suave apenas em desktop */
+      @media (min-width: 769px) {
+        html {
+          scroll-behavior: smooth;
+        }
+      }
+
+      /* Scroll instantâneo em mobile para melhor performance */
+      @media (max-width: 768px) {
+        html {
+          scroll-behavior: auto;
+        }
       }
 
       body {
         font-family: "Poppins", sans-serif;
         overflow-x: hidden;
+        overflow-y: auto;
         max-width: 100vw;
         position: relative;
         width: 100%;
+        height: auto;
+        min-height: 100vh;
         touch-action: pan-y pinch-zoom;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: none;
+        overscroll-behavior-y: auto;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Otimizações de performance para scroll */
+      @media (max-width: 768px) {
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+          transform: translate3d(0, 0, 0);
+        }
       }
 
       /* Prevenir overflow em todos os containers */
       section, div, header, footer {
         max-width: 100%;
+      }
+
+      /* Prevenir que animações AOS causem overflow horizontal */
+      [data-aos] {
+        overflow-x: clip;
+      }
+
+      @media (max-width: 768px) {
+        /* No mobile, usar animações fade apenas para evitar overflow */
+        [data-aos="fade-up"],
+        [data-aos="fade-down"],
+        [data-aos="fade-left"],
+        [data-aos="fade-right"] {
+          transform: none !important;
+        }
       }
 
       /* Garantir que imagens não causem overflow */
@@ -110,16 +160,21 @@
       #photoModal {
         display: none;
         position: fixed;
-        inset: 0;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
         background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(10px);
         justify-content: center;
         align-items: center;
-        z-index: 1000;
+        z-index: 99999;
         animation: fadeIn 0.3s ease;
         overflow: hidden;
-        width: 100vw;
-        max-width: 100vw;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       @keyframes fadeIn {
@@ -132,6 +187,14 @@
       #photoModal > div {
         max-width: 95vw;
         max-height: 95vh;
+        position: relative;
+        margin: auto;
+      }
+
+      /* Transição suave para imagens do modal */
+      #photoModalImg {
+        transition: opacity 0.2s ease-in-out;
+        will-change: opacity;
       }
 
       @media (max-width: 768px) {
@@ -220,6 +283,8 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
         -webkit-overflow-scrolling: touch;
+        scroll-behavior: auto;
+        will-change: scroll-position;
       }
 
       .scrollbar-hide::-webkit-scrollbar {
@@ -273,6 +338,15 @@
       #auto-videos-carousel {
         touch-action: pan-x;
         overscroll-behavior-x: contain;
+        scroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Otimização de performance para cards dos carrosséis */
+      .portfolio-card {
+        will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
       }
 
       /* Forçar todos os elementos a respeitarem o limite da viewport */
@@ -289,7 +363,6 @@
       [class*="grid"],
       [class*="flex"] {
         max-width: 100%;
-        overflow: visible;
       }
 
       /* Ajustar containers principais */
@@ -1471,10 +1544,16 @@
     <script>
       // ==================== INICIALIZAÇÃO ====================
       document.addEventListener('DOMContentLoaded', () => {
+        // Configuração otimizada do AOS
+        const isMobile = window.innerWidth <= 768;
+
         AOS.init({
-          duration: 800,
+          duration: isMobile ? 400 : 800, // Animações mais rápidas no mobile
           once: true,
-          offset: 100
+          offset: isMobile ? 50 : 100,
+          disable: false, // Manter animações
+          disableMutationObserver: true,
+          anchorPlacement: 'top-bottom', // Evita problemas de scroll
         });
 
         initTypewriter();
@@ -1486,51 +1565,53 @@
 
       // ==================== PREVENIR SCROLL HORIZONTAL ====================
       function preventHorizontalScroll() {
-        // Prevenir scroll horizontal na página (permitir apenas nos carrosséis)
-        let scrollTimeout;
+        // Prevenir scroll horizontal de forma otimizada (sem travar)
+        let ticking = false;
 
         window.addEventListener('scroll', () => {
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            if (window.scrollX !== 0) {
-              window.scrollTo(0, window.scrollY);
-            }
-          }, 10);
-        });
-
-        // Garantir que a página sempre fique com scroll X em 0
-        setInterval(() => {
-          if (window.scrollX !== 0) {
-            window.scrollTo(0, window.scrollY);
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              if (window.scrollX !== 0) {
+                window.scrollTo(0, window.scrollY);
+              }
+              ticking = false;
+            });
+            ticking = true;
           }
-        }, 100);
+        }, { passive: true });
 
-        // Prevenir touch horizontal fora dos carrosséis
+        // Prevenir touch horizontal fora dos carrosséis (otimizado)
         let touchStartX = 0;
         let touchStartY = 0;
+        let isScrollingCarousel = false;
         const carouselIds = ['videos-carousel', 'photos-carousel', 'auto-videos-carousel'];
 
         document.addEventListener('touchstart', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+
           touchStartX = e.touches[0].clientX;
           touchStartY = e.touches[0].clientY;
-        }, { passive: false });
+
+          // Verificar se o touch está em um carrossel
+          isScrollingCarousel = carouselIds.some(id => {
+            const carousel = document.getElementById(id);
+            return carousel && carousel.contains(e.target);
+          });
+        }, { passive: true });
 
         document.addEventListener('touchmove', (e) => {
+          // Se está em carrossel, não fazer nada
+          if (isScrollingCarousel) return;
+
           if (!e.touches || !e.touches[0]) return;
 
           const touchEndX = e.touches[0].clientX;
           const touchEndY = e.touches[0].clientY;
-          const diffX = touchStartX - touchEndX;
-          const diffY = touchStartY - touchEndY;
+          const diffX = Math.abs(touchStartX - touchEndX);
+          const diffY = Math.abs(touchStartY - touchEndY);
 
-          // Verificar se o touch está em um carrossel
-          const isInCarousel = carouselIds.some(id => {
-            const carousel = document.getElementById(id);
-            return carousel && carousel.contains(e.target);
-          });
-
-          // Se não está em carrossel e movimento é mais horizontal que vertical, prevenir
-          if (!isInCarousel && Math.abs(diffX) > Math.abs(diffY)) {
+          // Se movimento é predominantemente horizontal, prevenir
+          if (diffX > diffY && diffX > 10) {
             e.preventDefault();
           }
         }, { passive: false });
@@ -1678,12 +1759,14 @@
         iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
         modal.style.display = "flex";
 
-        // Fixar body na posição atual
+        // Bloquear scroll sem position fixed (melhor para modais)
         document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollPosition}px`;
-        document.body.style.width = '100%';
+        document.body.style.height = '100vh';
+        document.body.style.position = 'relative';
         document.documentElement.style.overflow = 'hidden';
+
+        // Manter scroll visual
+        document.documentElement.scrollTop = scrollPosition;
       }
 
       function closeModal() {
@@ -1697,13 +1780,14 @@
 
         // Restaurar body
         document.body.style.overflow = '';
+        document.body.style.height = '';
         document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
         document.documentElement.style.overflow = '';
 
-        // Restaurar posição do scroll
-        window.scrollTo(0, scrollPosition);
+        // Restaurar posição do scroll suavemente
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollPosition);
+        });
       }
 
       // ===== MODAL DE FOTOS =====
@@ -1798,6 +1882,10 @@
 
         const modal = document.getElementById("photoModal");
         const title = document.getElementById("photoTitle");
+        const img = document.getElementById("photoModalImg");
+
+        // Adicionar transição suave
+        img.style.transition = 'opacity 0.2s ease-in-out';
 
         // Salvar posição atual do scroll
         scrollPosition = window.scrollY || window.pageYOffset;
@@ -1805,12 +1893,14 @@
         title.textContent = galleryName;
         modal.style.display = "flex";
 
-        // Fixar body na posição atual
+        // Bloquear scroll sem position fixed (melhor para modais)
         document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollPosition}px`;
-        document.body.style.width = '100%';
+        document.body.style.height = '100vh';
+        document.body.style.position = 'relative';
         document.documentElement.style.overflow = 'hidden';
+
+        // Manter scroll visual
+        document.documentElement.scrollTop = scrollPosition;
 
         renderPhoto();
       }
@@ -1825,13 +1915,14 @@
 
         // Restaurar body
         document.body.style.overflow = '';
+        document.body.style.height = '';
         document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
         document.documentElement.style.overflow = '';
 
-        // Restaurar posição do scroll
-        window.scrollTo(0, scrollPosition);
+        // Restaurar posição do scroll suavemente
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollPosition);
+        });
 
         img.src = "";
         currentGallery = [];
@@ -1840,14 +1931,61 @@
         title.textContent = "";
       }
 
+      // Cache de imagens pré-carregadas
+      const imageCache = new Map();
+
+      function preloadImage(src) {
+        if (imageCache.has(src)) return imageCache.get(src);
+
+        const img = new Image();
+        img.src = src;
+        imageCache.set(src, img);
+        return img;
+      }
+
+      function preloadAdjacentPhotos() {
+        if (!currentGallery.length) return;
+
+        // Pré-carregar próxima e anterior
+        const nextIndex = (currentIndex + 1) % currentGallery.length;
+        const prevIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+
+        preloadImage(currentGallery[nextIndex]);
+        preloadImage(currentGallery[prevIndex]);
+      }
+
       function renderPhoto() {
         if (!currentGallery.length) return;
 
         const img = document.getElementById("photoModalImg");
         const counter = document.getElementById("photoCounter");
 
-        img.src = currentGallery[currentIndex];
-        counter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
+        // Usar requestAnimationFrame para animação suave
+        requestAnimationFrame(() => {
+          img.style.opacity = '0';
+
+          requestAnimationFrame(() => {
+            // Trocar imagem após fade out
+            setTimeout(() => {
+              img.src = currentGallery[currentIndex];
+              counter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
+
+              // Fade in quando carregar (ou imediatamente se já estiver em cache)
+              const fadeIn = () => {
+                requestAnimationFrame(() => {
+                  img.style.opacity = '1';
+                  preloadAdjacentPhotos();
+                });
+              };
+
+              if (img.complete) {
+                fadeIn();
+              } else {
+                img.onload = fadeIn;
+              }
+            }, 150);
+          });
+        });
       }
 
       function nextPhoto() {
